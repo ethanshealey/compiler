@@ -1,4 +1,5 @@
-# compiler
+# Compiler
+## By Ethan Shealey
 
 # HOW TO RUN
 make all
