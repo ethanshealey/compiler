@@ -1,5 +1,5 @@
 # Compiler
-## By Ethan Shealey
+By Ethan Shealey
 
 # HOW TO RUN
 make all
