@@ -2,5 +2,6 @@ program prog1 is
 	x, y, z, a : integer;
 begin
 	z := 25;
+	z := "wow" & "wow";
 	writeln int2string(z);
 end;

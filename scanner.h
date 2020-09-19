@@ -79,6 +79,8 @@ public:
 
     token* this_token();
     // Returns the current token, without advancing to the next token in the input stream.
+
+	void print_current_token();
 };
 
 #endif /* SCANNER_H_ */

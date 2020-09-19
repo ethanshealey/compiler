@@ -815,3 +815,7 @@ token* scanner::this_token()
 	result = current_token;
 	return result;
 }
+
+void scanner::print_current_token() {
+	cout << current_token->get_sym() << endl;
+}
