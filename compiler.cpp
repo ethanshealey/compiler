@@ -61,9 +61,9 @@ string listing_filename;						// name of the listing file to be generated if nee
 
 error_handler* err;								// error handler object
 scanner* scan;									// scanner object
-//parser* parse;									// parser object
-id_table* id_tab = NULL;								// symbol table object
-//code_gen* code;									// code generator
+parser* parse;									// parser object
+id_table* id_tab = NULL;						// symbol table object
+//code_gen* code;								// code generator
 
 bool process_command_line(int argc, char *argv[]) {
 	// Process the command line and identify flags that are set and any filenames provided.
@@ -200,7 +200,7 @@ bool process_command_line(int argc, char *argv[]) {
 			else
 				err = new error_handler(source_filename, listing_filename);
 
-						// THE FOLLOWIG CODE IS FOR TESTING PURPOSES ONLY.
+						/*// THE FOLLOWIG CODE IS FOR TESTING PURPOSES ONLY.
                         scan = new scanner(source_filename, id_tab, err);
 
                         token* tok;
@@ -208,18 +208,21 @@ bool process_command_line(int argc, char *argv[]) {
                         {
                         	tok = scan->get_token();
                         } while (tok->get_sym() != symbol::end_of_program);
-                        //END OF CODE FOR TESTING PURPOSES
+                        //END OF CODE FOR TESTING PURPOSES */
 						
-			parser* parse;
-			parse = new parser();
-			parse->test();
+			
+			
 			// Create a symbol_table object
 			
 			// create a scanner object
+			scan = new scanner(source_filename, id_tab, err);
 
 			// create the code generator
 
 			// create a parser object
+			parse = new parser(scan);
+			scan->get_token();
+			parse->PROG();
 			
 			// Compile the source code
 			

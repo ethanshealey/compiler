@@ -5,9 +5,6 @@ all:	compiler.o parser.o error_handler.o lille_exception.o scanner.o id_table.o 
 compiler.o:	id_table.o error_handler.o lille_exception.o scanner.o symbol.o parser.o compiler.cpp
 	g++ -std=c++2a -c compiler.cpp
 
-parser.o: parser.h parser.cpp
-	g++ -std=c++2a -c parser.cpp
-
 error_handler.o: lille_exception.o token.o error_handler.h error_handler.cpp
 	g++ -std=c++2a -c error_handler.cpp
 
@@ -25,6 +22,9 @@ symbol.o: symbol.h symbol.cpp
 
 token.o: lille_exception.o symbol.o token.h token.cpp
 	g++ -std=c++2a -c token.cpp
+
+parser.o: scanner.o symbol.o parser.h parser.cpp
+	g++ -std=c++2a -c parser.cpp
 
 clean:
 	rm *.o 

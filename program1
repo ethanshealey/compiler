@@ -1,10 +1,6 @@
 program prog1 is
-	x, y, z, a : int ;
+	x, y, z, a : integer;
 begin
-	2e+3
-	write "Enter 2 numbers: ";
-	read x, y;
-	write "Their sum is: ";
 	z := 25;
 	writeln int2string(z);
 end;
