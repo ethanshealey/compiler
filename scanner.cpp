@@ -405,7 +405,7 @@ void scanner::scan_string()
 	bool end = false; // Boolean to check if the string is complete
 	current_string_value = ""; // String to contain the inputted string
 	while(!end) {
-		if(eoln_flag) {error->flag(current_line_number, current_pos_on_line, 60); break;} // check if char is a new line -> error 
+		if(eoln_flag) {error->flag(current_line_number, current_pos_on_line, 60); end = true;} // check if char is a new line -> error 
 		if(next_char != '"') {current_string_value += next_char;} // Check if the current digit is a double quote
 		else if(following_char() == '"') { // if next digit is also a double quote -> skip current char 
 			get_char();					   // and assign a SINGLE double quote to the string 

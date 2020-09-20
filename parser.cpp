@@ -2,7 +2,7 @@
  * parser.cpp
  *
  *  Created on: Sept 16, 2020
- *      Author: Michael Oudshoorn
+ *      Author: Ethan Shealey
  */
 
 #include <iostream>
@@ -16,7 +16,8 @@ parser::parser(scanner* s) {
     scan=s;
 }
 
-void parser::PROG() {
+void parser::PROG() { // Begin program
+    //scan->get_token();
     scan->must_be(symbol::program_sym);
     IDENT();
     scan->must_be(symbol::is_sym);
@@ -25,7 +26,6 @@ void parser::PROG() {
 }
 
 void parser::BLOCK() {
-    //will need while loop here (can have many declarations)
     while (IS_DECLERATION()) {
          DECLERATION();
     }
@@ -372,7 +372,6 @@ void parser::FACTOR() {
         PRIMARY();
     } 
     else {
-        //i think the two asterisks mean power symbol
         if (scan->have(symbol::power_sym)) {
             scan->must_be(symbol::power_sym);
             PRIMARY();
@@ -481,4 +480,3 @@ bool parser::IS_DECLERATION() {
 void parser::IDENT() {
     scan->must_be(symbol::identifier);
 }
-

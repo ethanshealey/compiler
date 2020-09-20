@@ -222,8 +222,10 @@ bool process_command_line(int argc, char *argv[]) {
 			// create a parser object
 			parse = new parser(scan);
 			scan->get_token();
-			parse->PROG();
-			
+			while(scan->have(symbol::program_sym)) {
+				parse->PROG();
+			}
+			scan->must_be(symbol::end_of_program);
 			// Compile the source code
 			
 			// Generate the PAL code file, if no errors were detected.

@@ -2,7 +2,7 @@
  * parser.h
  *
  *  Created on: Sept 16, 2020
- *      Author: Ethaiin Shealey
+ *      Author: Ethan Shealey
  */
 
 #ifndef PARSER_H_
