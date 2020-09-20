@@ -412,7 +412,8 @@ void scanner::scan_string()
 			current_string_value += next_char;
 		}
 		else {end = true;} // if just a single double quote, terminate string
-		get_char();
+		if(not end)
+			get_char();
 	}
 	current_symbol = new symbol(symbol::strng);  // create the string object
 }

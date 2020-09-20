@@ -24,7 +24,9 @@ public:
 
 private:
 
-    scanner* scan;
+    scanner* scan; // Copy of scanner
+
+    // Functions
     void BLOCK(); 
     void DECLERATION(); 
     void TYPE();
@@ -35,18 +37,13 @@ private:
     void STATEMENT();
     void SIMPLE_STATEMENT();
     void COMPOUND_STATEMENT();
-    bool IS_SIMPLE_STATEMENT();
-    bool IS_COMPOUND_STATEMENT();
-    bool IS_EXPR();
     void EXPR();
     void SIMPLE_EXPR();
     void EXPR2();
     void TERM();
     void FACTOR();
     void PRIMARY();
-    bool IS_RELOP();
     void RELOP();
-    bool IS_IDENT();
     void IDENT();
     void IF_STATEMENT();
     void ELSIF_STATEMENT();
@@ -62,18 +59,24 @@ private:
     void DIGIT_SEQ();
     void EXP();
     void PRAGMA();
-    bool IS_ADDOP();
-    bool IS_TERM();
-    bool IS_PRIMARY();
-    bool IS_NUMBER();
-    bool IS_STRING();
-    bool IS_FACTOR();
     void FOR_STATEMENT();
     void WHILE_STATEMENT();
     void RANGE();
     void IDENT_LIST();
+
+    // Boolean Functions
+    bool IS_EXPR();
     bool IS_BOOL();
+    bool IS_RELOP();
     bool IS_MULTOP();
+    bool IS_ADDOP();
+    bool IS_PRIMARY();
+    bool IS_NUMBER();
+    bool IS_STRING();
+    bool IS_FACTOR();
+    bool IS_DECLERATION();
+    bool IS_STATEMENT();
+    
 };
 
 #endif
