@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 
+#include "id_table.h"
 #include "symbol.h"
 #include "scanner.h"
 
@@ -19,12 +20,14 @@ using namespace std;
 class parser {
 public:
 
-    parser(scanner* s);
+    parser(scanner* s, id_table* t);
+    ~ parser();
     void PROG(); 
 
 private:
 
     scanner* scan; // Copy of scanner
+    id_table* table;
 
     // Functions
     void BLOCK(); 
@@ -76,6 +79,9 @@ private:
     bool IS_FACTOR();
     bool IS_DECLERATION();
     bool IS_STATEMENT();
+
+    // ID_table stuff
+    void define_function(string name, lille_type t, lille_type p);
     
 };
 

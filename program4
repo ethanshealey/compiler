@@ -21,3 +21,4 @@ begin
 		writeln "Average is " & int2string(average);
 	end if;
 end;
+sdsdsd

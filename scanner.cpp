@@ -820,3 +820,7 @@ token* scanner::this_token()
 void scanner::print_current_token() {
 	cout << current_token->get_sym() << endl;
 }
+
+string scanner::get_current_identifier_name() {
+	return current_identifier_name;
+}

@@ -9,16 +9,67 @@
 #include "symbol.h"
 #include "scanner.h"
 #include "parser.h"
+#include "lille_type.h"
+#include "lille_kind.h"
+#include "id_table.h"
+#include "id_table_entry.h"
 
 using namespace std;
 
-parser::parser(scanner* s) {
+parser::parser(scanner* s, id_table* t) {
     scan=s;
+    table=t;
+}
+parser::~parser() {
+    delete scan;
+    scan = NULL;
+
+    delete table;
+    table = NULL;
+}
+
+void parser::define_function(string name, lille_type t, lille_type p) {
+
+    // Create variables 
+    token* fun, * arg;
+    symbol* sym;
+    id_table_entry* fun_id, * param_id;
+
+    // Generate the entry
+    sym = new symbol(symbol::identifier);
+    fun = new token(sym, 0, 0);
+    fun->set_identifier_value(name);
+    fun_id = table->enter_id(fun, lille_type::type_func, lille_kind::unknown, 0, 0, t);
+    table->add_table_entry(fun_id);
+    
+    // Generate the Arguments
+    arg = new token(sym, 0, 0);
+    arg->set_identifier_value("__" + name + "_arg__");
+    param_id = new id_table_entry(arg, p, lille_kind::value_param, 0, 0, lille_type::type_unknown);
+    fun_id->add_param(param_id);
 }
 
 void parser::PROG() { // Begin program
-    //scan->get_token();
-    scan->must_be(symbol::program_sym);
+    scan->must_be(symbol::program_sym);    
+
+    // Create variables 
+    token* proc;
+    symbol* sym;
+    id_table_entry* proc_id;
+
+    // Generate the entry
+    sym = new symbol(symbol::identifier);
+    proc = new token(sym, 0, 0);
+    proc->set_identifier_value(scan->get_current_identifier_name());
+    proc_id = table->enter_id(proc, lille_type::type_proc, lille_kind::unknown, 0, 0);
+    table->add_table_entry(proc_id);
+
+    // Define the predifined functions
+    parser::define_function("INT2REAL", lille_type::type_real, lille_type::type_integer);
+    parser::define_function("REAL2INT", lille_type::type_integer, lille_type::type_real);
+    parser::define_function("INT2STRING", lille_type::type_string, lille_type::type_integer);
+    parser::define_function("REAL2STRING", lille_type::type_string, lille_type::type_real);
+
     IDENT();
     scan->must_be(symbol::is_sym);
     BLOCK();
@@ -26,9 +77,9 @@ void parser::PROG() { // Begin program
 }
 
 void parser::BLOCK() {
-    while (IS_DECLERATION()) {
+    table->enter_scope();
+    while (IS_DECLERATION()) 
          DECLERATION();
-    }
     scan->must_be(symbol::begin_sym);
     STATEMENT_LIST();
     scan->must_be(symbol::end_sym);
@@ -41,9 +92,8 @@ void parser::DECLERATION() {
     if (scan->have(symbol::identifier)) {
         IDENT_LIST();
         scan->must_be(symbol::colon_sym);
-         if (scan->have(symbol::constant_sym)) {
+         if (scan->have(symbol::constant_sym)) 
             scan->must_be(symbol::constant_sym);
-         }
          TYPE();
          if (scan->have(symbol::becomes_sym)) {
             scan->must_be(symbol::becomes_sym);
@@ -85,7 +135,6 @@ void parser::DECLERATION() {
 }
 
 void parser::STATEMENT_LIST() {
-    //need a while loop here, could have many statements.
     STATEMENT();
     scan->must_be(symbol::semicolon_sym);
     while (IS_STATEMENT()) {
@@ -205,7 +254,7 @@ void parser::SIMPLE_STATEMENT() {
             IDENT();
         }
 
-        if (lp) {
+        if(lp) {
             scan->must_be(symbol::right_paren_sym);
         }
     } 
@@ -429,6 +478,12 @@ void parser::PRIMARY() {
         BOOL();
 }
 
+void parser::IDENT() {
+    scan->must_be(symbol::identifier);
+
+
+}
+
 bool parser::IS_NUMBER() {
     if (scan->have(symbol::real_num) or scan->have(symbol::integer)) 
         return true;
@@ -477,6 +532,3 @@ bool parser::IS_DECLERATION() {
     return false;
 }
 
-void parser::IDENT() {
-    scan->must_be(symbol::identifier);
-}
