@@ -23,8 +23,13 @@ id_table::id_table(error_handler* err)
 	debug_mode = true;
 	scope_level = 0;
 
-	for(int i = 0; i < max_depth; i++)
-		sym_table[i] = NULL;
+	for(int i = 0; i < max_depth; i++) {
+		sym_table[i] = new node;
+		sym_table[i]->idt = NULL;
+		sym_table[i]->left = NULL;
+		sym_table[i]->right = NULL;
+	}
+
 }
 
 
@@ -59,38 +64,63 @@ int id_table::scope() {
 }
 
 void id_table::add_table_entry(id_table_entry* id) {
-	node* ptr = sym_table[scope()];
+	node* entry = new node;
+	entry->idt = id;
+	entry->right = NULL;
+	entry->left = NULL;
 
-	bool match = false;
+	node* x = sym_table[scope()], * y = NULL;
 
-	if(ptr == NULL) {
-		ptr = new node;
-		ptr->idt = id;
-		ptr->right = NULL;
-		ptr->left = NULL;
-		match = true;
-	}
-	while(not match) {
-		else if(id->name() < ptr->idt->name()) {
-			if(ptr->left != NULL)
-				ptr = ptr->left;
-			else
-				match = true;
+	bool found = false;
+	while(x->idt != NULL) {
+		y = x;
+		if(id->name() < x->idt->name()) {
+			x = x->left;
 		}
-		else if(id->name() >= ptr->idt->name()) {
-			if(ptr->right != NULL)
-				ptr = ptr->right;
-			else
-				match = true;
-		} 
+		else {
+			x = x->right;
+		}
+		if(x == NULL)
+			break;
 	}
 
-	ptr = new node;
-	ptr->idt = id;
-	ptr->right = NULL;
-	ptr->left = NULL;
+	if(y == NULL)  
+		sym_table[scope()] = entry;
+	else if (id->name() < y->idt->name()) 
+        y->left = entry;
+	else
+		y->right = entry;
+
+	cout << "ADDED ENTRY: Created Entry " << id->name() << " in Scope " << scope() << endl;
 }
 
 id_table_entry* id_table::enter_id(token* id, lille_type typ, lille_kind kind, int level, int offset, lille_type return_tipe) {
 	return new id_table_entry(id, typ, kind, level, offset, return_tipe);
+}
+
+id_table_entry* id_table::lookup(string s) {	
+	int sc = scope();
+	node* ptr = sym_table[sc];
+	bool found = false;
+	
+	while(sc >= 0) {
+		if(ptr == NULL or ptr->idt == NULL) {
+			if(sc > 0)
+				ptr = sym_table[--sc];	
+			else
+				sc--;
+		}
+		else if(s < ptr->idt->name()) {
+			ptr = ptr->left;
+		}
+		else if(s > ptr->idt->name()) {
+			ptr = ptr->right;
+		}
+		else if(s == ptr->idt->name()) {
+			cout << "FOUND ENTRY: Found entry " << s << endl;
+			return ptr->idt; 
+		}
+	}
+	cout << "DID NOT FIND: Failed to find entry " << s << endl; 
+	return NULL;
 }

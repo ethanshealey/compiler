@@ -25,6 +25,9 @@ private:
 	int integer_value;			// If symbol represents an integer value, this is its value.
 	string string_value;		// If symbol represents a string value, this is its value.
 	string identifier_value;	// If the symbol represents an identifier, this is its name.
+	string prog_value;
+	string proc_value;
+	string fun_value;
 
 public:
 	token();
@@ -41,11 +44,17 @@ public:
 	int get_integer_value();	// returns the integer_value only if the symbol is a integer_number. Raises a DO_exceeption otherwise.
 	string get_string_value();	// returns the string_value only if the symbol is a string. Raises a DO_exceeption otherwise.
 	string get_identifier_value(); // returns the string_value only if the symbol is an identifier. Raises a Lille_exceeption otherwise.
+	string get_prog_value();
+	string get_proc_value();
+	string get_fun_value();
 
 	void set_real_value(float f); 	// Set the real_value to f only if the token represents a real_value. Raise an exception otherwise.
 	void set_integer_value(int i);	// Set the ingteger_value to i only if the token represents a integer_value. Raise an exception otherwise.
 	void set_string_value(string s);	// Set the string_value to s only if the token represents a string_value. Raise an exception otherwise.
 	void set_identifier_value(string s);	// Set the identifier_value to s only if the token represents an identifier. Raise an exception otherwise.
+	void set_prog_value(string s);
+	void set_proc_value(string s);
+	void set_fun_value(string s);
 
 	void print_token();			// print out the token. Helpful for debugging.
 

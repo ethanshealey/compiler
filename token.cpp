@@ -136,6 +136,23 @@ string token::get_identifier_value()
 		//throw lille_exception("Illegal access to identifier_value in token.");
 }
 
+string token::get_prog_value() {
+	if(sym->get_sym() == symbol::program_sym)
+		return prog_value;
+	else return "";
+}
+
+string token::get_proc_value() {
+	if(sym->get_sym() == symbol::procedure_sym)
+		return proc_value;
+	else return "";
+}
+
+string token::get_fun_value() {
+	if(sym->get_sym() == symbol::function_sym)
+		return fun_value;
+	else return "";
+}
 
 void token::set_real_value(float f)
 // Set the real_value to f only if the token represents a real_value. Raise an exception otherwise.
@@ -176,6 +193,23 @@ void token::set_identifier_value(string s)
 		throw lille_exception("Illegal attempt to set identifier_value in token");
 }
 
+void token::set_prog_value(string s) {
+	if(sym->get_sym() == symbol::program_sym)
+		prog_value = s;
+	else throw lille_exception("Illegal attempt to set prog_value in token");
+}
+
+void token::set_proc_value(string s) {
+	if(sym->get_sym() == symbol::procedure_sym)
+		proc_value = s;
+	else throw lille_exception("Illegal attempt to set proc_value in token");
+}
+
+void token::set_fun_value(string s) {
+	if(sym->get_sym() == symbol::function_sym)
+		fun_value = s;
+	else throw lille_exception("Illegal attempt to set fun_value in token");
+}
 
 void token::print_token()
 {

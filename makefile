@@ -21,7 +21,7 @@ token.o: lille_exception.o symbol.o token.h token.cpp
 	g++ -std=c++2a -c token.cpp
 
 parser.o: scanner.o symbol.o lille_kind.o lille_type.o id_table.o id_table_entry.o parser.h parser.cpp
-	g++ -std=c++2a -c parser.cpp
+	g++ -std=c++2a -c -Wall parser.cpp
 
 id_table.o: token.o error_handler.o id_table_entry.o lille_type.o lille_kind.o id_table.h id_table.cpp
 	g++ -std=c++2a -c id_table.cpp

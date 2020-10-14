@@ -12,6 +12,10 @@
 #include <string>
 #include <cctype>
 #include <cmath>
+#include <algorithm> 
+#include <string>  
+#include <functional>
+#include <cctype>
 
 #include "symbol.h"
 #include "error_handler.h"
@@ -822,5 +826,12 @@ void scanner::print_current_token() {
 }
 
 string scanner::get_current_identifier_name() {
-	return current_identifier_name;
+	string s = current_identifier_name;
+	transform(s.begin(), s.end(), s.begin(), ::toupper);
+	return s;
+}
+
+string scanner::get_current_sym() {
+	return current_symbol->symtostr();
+	//cout << "TOKEN: " << sym->symtostr();
 }

@@ -6,10 +6,23 @@
  */
 
 #include <iostream>
+#include "id_table.h"
 #include "id_table_entry.h"
 
 id_table_entry::id_table_entry() {
-
+    id_entry = NULL;
+    lev_entry = 0;
+    offset_entry = 0;
+    kind_entry = lille_kind::unknown;
+    trace_entry = false;
+    typ_entry = lille_type::type_unknown;
+    i_val_entry = 0;
+    r_val_entry = 0.0;
+    s_val_entry = "";
+    b_val_entry = false;
+    p_list_entry = NULL;
+    n_par_entry = 0;
+    r_ty_entry = lille_type::type_unknown;
 }
 
 id_table_entry::id_table_entry(token* id, lille_type typ, lille_kind kind, int level, int offset, lille_type return_tipe) {
@@ -19,6 +32,16 @@ id_table_entry::id_table_entry(token* id, lille_type typ, lille_kind kind, int l
     lev_entry = level;
     offset_entry = offset;
     r_ty_entry = return_tipe;
+
+    p_list_entry = NULL;
+    n_par_entry = 0;
+    lev_entry = 0;
+    offset_entry = 0;
+    trace_entry = false;
+    i_val_entry = 0;
+    r_val_entry = 0.0;
+    s_val_entry = "";
+    b_val_entry = false;
 }
 
 int id_table_entry::offset() {
@@ -42,7 +65,15 @@ token* id_table_entry::token_value() {
 }
 
 string id_table_entry::name() {
-    return id_entry->get_identifier_value();
+    if(id_entry->get_sym() == symbol::identifier)
+        return id_entry->get_identifier_value();
+    else if(id_entry->get_sym() == symbol::program_sym)
+        return id_entry->get_prog_value();
+    else if(id_entry->get_sym() == symbol::procedure_sym)
+        return id_entry->get_proc_value();
+    else if(id_entry->get_sym() == symbol::function_sym)
+        return id_entry->get_fun_value();
+    return "";
 }
 
 int id_table_entry::integer_value() {
@@ -66,6 +97,64 @@ lille_type id_table_entry::return_tipe() {
 }
 
 void id_table_entry::add_param(id_table_entry* param_entry) {
-   
+    bool finished = false;
+    id_table_entry* ptr = this;
+    while(not finished) {
+
+        if(ptr->p_list_entry == NULL) {
+            ptr->p_list_entry = param_entry;
+            finished = true;
+            this->n_par_entry++;
+            cout << "LINKED PARAM: Linked " << param_entry->name() << " to " << this->name() << endl;
+        }
+        else
+            ptr = ptr->p_list_entry;
+    }
+
 }
 
+void id_table_entry::set_value(int val) {
+    this->i_val_entry = val;
+}
+
+void id_table_entry::set_value(float val) {
+    this->r_val_entry = val;
+}
+
+void id_table_entry::set_value(bool val) {
+    this->b_val_entry = val;
+}
+
+void id_table_entry::set_value(string val) {
+    this->s_val_entry = val;
+}
+
+void id_table_entry::set_type(lille_type t) {
+    this->typ_entry = t;
+}
+
+void id_table_entry::set_kind(lille_kind t) {
+    this->kind_entry = t;
+}
+
+void id_table_entry::fix_const(int integer_value, float real_value, string string_value, bool bool_value) {
+    i_val_entry = integer_value;
+    r_val_entry = real_value;
+    s_val_entry = string_value;
+    b_val_entry = bool_value;
+}
+
+void id_table_entry::fix_return_type(lille_type ret_ty) {
+    this->r_ty_entry = ret_ty;
+}
+
+id_table_entry* id_table_entry::nth_parameter(int n) {
+    id_table_entry* ptr = this;
+    for(int i = 0; i < n; n++) {
+
+    }
+}
+
+int id_table_entry::number_of_params() {
+    return n_par_entry;
+}

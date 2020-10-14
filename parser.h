@@ -20,7 +20,7 @@ using namespace std;
 class parser {
 public:
 
-    parser(scanner* s, id_table* t);
+    parser(scanner* s, id_table* t, error_handler* e);
     ~ parser();
     void PROG(); 
 
@@ -28,6 +28,7 @@ private:
 
     scanner* scan; // Copy of scanner
     id_table* table;
+    error_handler* error;
 
     // Functions
     void BLOCK(); 
@@ -82,7 +83,11 @@ private:
 
     // ID_table stuff
     void define_function(string name, lille_type t, lille_type p);
-    
+    lille_type get_ident_type();    
+    id_table_entry* current_entry;
+    id_table_entry* current_fun_or_proc;
+    id_table_entry* current_ident;
+    void handle_function_or_procedure_call(id_table_entry* current_entry);
 };
 
 #endif

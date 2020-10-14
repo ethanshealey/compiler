@@ -209,7 +209,7 @@ bool process_command_line(int argc, char *argv[]) {
 			// create the code generator
 
 			// create a parser object
-			parse = new parser(scan, table);
+			parse = new parser(scan, table, err);
 
 			
 			

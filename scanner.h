@@ -83,6 +83,8 @@ public:
 	void print_current_token();
 
 	string get_current_identifier_name();
+
+	string get_current_sym();
 };
 
 #endif /* SCANNER_H_ */
