@@ -92,6 +92,7 @@ void id_table::add_table_entry(id_table_entry* id) {
 		y->right = entry;
 
 	cout << "ADDED ENTRY: Created Entry " << id->name() << " in Scope " << scope() << endl;
+	cout << id->tipe().to_string() << endl;
 }
 
 id_table_entry* id_table::enter_id(token* id, lille_type typ, lille_kind kind, int level, int offset, lille_type return_tipe) {

@@ -113,30 +113,6 @@ void id_table_entry::add_param(id_table_entry* param_entry) {
 
 }
 
-void id_table_entry::set_value(int val) {
-    this->i_val_entry = val;
-}
-
-void id_table_entry::set_value(float val) {
-    this->r_val_entry = val;
-}
-
-void id_table_entry::set_value(bool val) {
-    this->b_val_entry = val;
-}
-
-void id_table_entry::set_value(string val) {
-    this->s_val_entry = val;
-}
-
-void id_table_entry::set_type(lille_type t) {
-    this->typ_entry = t;
-}
-
-void id_table_entry::set_kind(lille_kind t) {
-    this->kind_entry = t;
-}
-
 void id_table_entry::fix_const(int integer_value, float real_value, string string_value, bool bool_value) {
     i_val_entry = integer_value;
     r_val_entry = real_value;
@@ -149,12 +125,29 @@ void id_table_entry::fix_return_type(lille_type ret_ty) {
 }
 
 id_table_entry* id_table_entry::nth_parameter(int n) {
-    id_table_entry* ptr = this;
-    for(int i = 0; i < n; n++) {
-
+    id_table_entry* ptr = this; 
+    for(int i = 0; i < n+1; i++) {
+        if(ptr->p_list_entry != NULL) {
+            ptr = ptr->p_list_entry;
+        }
     }
+    if(ptr == this)
+        return NULL;
+    return ptr;
 }
 
 int id_table_entry::number_of_params() {
     return n_par_entry;
+}
+
+bool id_table_entry::trace() {
+    return trace_entry;
+}
+
+string id_table_entry::to_string() {
+    cout << this->name() << ": " << 
+    endl << "Type: " << this->tipe().to_string() << 
+    endl << "Kind: " << this->kind().to_string() << 
+    endl << "Scope: " << this->level() << 
+    endl << "Return Type: " << this->r_ty_entry.to_string() << endl;
 }

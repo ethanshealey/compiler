@@ -64,12 +64,6 @@ public:
     id_table_entry* nth_parameter(int n);
     int number_of_params();
     string to_string();
-    void set_value(int);
-    void set_value(float);
-    void set_value(bool);
-    void set_value(string);
-    void set_type(lille_type t = lille_type::type_unknown);
-    void set_kind(lille_kind t = lille_kind::unknown);
 };
 
 #endif

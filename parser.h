@@ -33,40 +33,14 @@ private:
     // Functions
     void BLOCK(); 
     void DECLERATION(); 
-    void TYPE();
-    void PARAM_LIST();
-    void PARAM();
-    void PARAM_KIND();
     void STATEMENT_LIST();
     void STATEMENT();
     void SIMPLE_STATEMENT();
     void COMPOUND_STATEMENT();
-    void EXPR();
-    void SIMPLE_EXPR();
-    void EXPR2();
-    void TERM();
-    void FACTOR();
-    void PRIMARY();
-    void RELOP();
-    void IDENT();
     void IF_STATEMENT();
-    void ELSIF_STATEMENT();
-    void ELSE_STATEMENT();
     void LOOP_STATEMENT();
-    void BOOL();
-    void STRINGOP();
-    void ADDOP();
-    void MULTOP();
-    void STRING();
-    void IDENT2();
-    void NUMBER();
-    void DIGIT_SEQ();
-    void EXP();
-    void PRAGMA();
     void FOR_STATEMENT();
     void WHILE_STATEMENT();
-    void RANGE();
-    void IDENT_LIST();
 
     // Boolean Functions
     bool IS_EXPR();
@@ -74,10 +48,7 @@ private:
     bool IS_RELOP();
     bool IS_MULTOP();
     bool IS_ADDOP();
-    bool IS_PRIMARY();
     bool IS_NUMBER();
-    bool IS_STRING();
-    bool IS_FACTOR();
     bool IS_DECLERATION();
     bool IS_STATEMENT();
 
@@ -88,6 +59,7 @@ private:
     id_table_entry* current_fun_or_proc;
     id_table_entry* current_ident;
     void handle_function_or_procedure_call(id_table_entry* current_entry);
+    void handle_if();
 };
 
 #endif
