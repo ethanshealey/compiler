@@ -11,7 +11,6 @@
 #include <iostream>
 #include <string>
 #include "token.h"
-//#include "id_table.h"
 #include "id_table_entry.h"
 #include "lille_type.h" 
 #include "lille_kind.h" 

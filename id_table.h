@@ -59,7 +59,6 @@ public:
     // Traces the binary tree
 
     bool trace_all();
-    // Traces the binary tree
 
     void add_table_entry(id_table_entry* id);
     // Adds an item to the id_table

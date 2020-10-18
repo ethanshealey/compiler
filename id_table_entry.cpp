@@ -100,7 +100,6 @@ void id_table_entry::add_param(id_table_entry* param_entry) {
     bool finished = false;
     id_table_entry* ptr = this;
     while(not finished) {
-
         if(ptr->p_list_entry == NULL) {
             ptr->p_list_entry = param_entry;
             finished = true;
@@ -145,9 +144,5 @@ bool id_table_entry::trace() {
 }
 
 string id_table_entry::to_string() {
-    cout << this->name() << ": " << 
-    endl << "Type: " << this->tipe().to_string() << 
-    endl << "Kind: " << this->kind().to_string() << 
-    endl << "Scope: " << this->level() << 
-    endl << "Return Type: " << this->r_ty_entry.to_string() << endl;
+    return this->name() + ":\n" + "Type: " + this->tipe().to_string() + "\nKind: " + this->kind().to_string() + "\nScope: " + ::to_string(this->level()) + "\nReturn Type: " + this->r_ty_entry.to_string();
 }

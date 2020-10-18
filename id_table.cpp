@@ -35,19 +35,29 @@ id_table::id_table(error_handler* err)
 
 void id_table::dump_id_table(bool dump_all)
 {
+	node* ptr;
 	if (!dump_all)
 	{
 		cout << "Dump of idtable for current scope only." << endl;
 		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-		
-        // INSERT CODE HERE
+
+		ptr = sym_table[scope()];
+		exit_scope();
+		delete ptr;
+		ptr = NULL;
 	}
 	else
 	{
 		cout << "Dump of the entire symbol table." << endl;
 		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 		
-        // INSERT CODE HERE
+		
+        while(scope() > 0) {
+			ptr = sym_table[scope()];
+			exit_scope();
+			delete ptr;
+			ptr = NULL;
+		}
 	}
 }
 
@@ -91,8 +101,8 @@ void id_table::add_table_entry(id_table_entry* id) {
 	else
 		y->right = entry;
 
-	cout << "ADDED ENTRY: Created Entry " << id->name() << " in Scope " << scope() << endl;
-	cout << id->tipe().to_string() << endl;
+	if(debug_mode)
+		cout << "ADDED ENTRY: Created Entry " << id->name() << " in Scope " << scope() << endl;
 }
 
 id_table_entry* id_table::enter_id(token* id, lille_type typ, lille_kind kind, int level, int offset, lille_type return_tipe) {
@@ -118,10 +128,55 @@ id_table_entry* id_table::lookup(string s) {
 			ptr = ptr->right;
 		}
 		else if(s == ptr->idt->name()) {
-			cout << "FOUND ENTRY: Found entry " << s << endl;
+			if(debug_mode)
+				cout << "FOUND ENTRY: Found entry " << s << endl;
 			return ptr->idt; 
 		}
 	}
-	cout << "DID NOT FIND: Failed to find entry " << s << endl; 
+	if(debug_mode)
+		cout << "DID NOT FIND: Failed to find entry " << s << endl; 
 	return NULL;
+}
+
+id_table_entry* id_table::lookup(token* tok) {	
+	int sc = scope();
+	node* ptr = sym_table[sc];
+	bool found = false;
+	
+	while(sc >= 0) {
+		if(ptr == NULL or ptr->idt == NULL) {
+			if(sc > 0)
+				ptr = sym_table[--sc];	
+			else
+				sc--;
+		}
+		else if(tok < ptr->idt->token_value()) {
+			ptr = ptr->left;
+		}
+		else if(tok > ptr->idt->token_value()) {
+			ptr = ptr->right;
+		}
+		else if(tok == ptr->idt->token_value()) {
+			if(debug_mode)
+				cout << "FOUND ENTRY: Found entry " << tok->to_string() << endl;
+			return ptr->idt; 
+		}
+	}
+	if(debug_mode)
+		cout << "DID NOT FIND: Failed to find entry " << tok->to_string() << endl; 
+	return NULL;
+}
+
+id_table::node* id_table::search_tree(string s, node* p) {
+	if(p != NULL or p->idt != NULL) {
+		if(s == p->idt->name()) {
+			return p;
+		}
+		if(s < p->idt->name()) {
+			search_tree(s, p->left);
+		}
+		else 
+			search_tree(s, p->right);
+	}
+	else return NULL;
 }

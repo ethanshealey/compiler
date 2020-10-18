@@ -48,6 +48,7 @@ private:
     bool IS_RELOP();
     bool IS_MULTOP();
     bool IS_ADDOP();
+    bool IS_PRIMARY();
     bool IS_NUMBER();
     bool IS_DECLERATION();
     bool IS_STATEMENT();
@@ -59,7 +60,8 @@ private:
     id_table_entry* current_fun_or_proc;
     id_table_entry* current_ident;
     void handle_function_or_procedure_call(id_table_entry* current_entry);
-    void handle_if();
+    void handle_if_and_while();
+    lille_type get_type();
 };
 
 #endif
