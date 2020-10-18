@@ -669,8 +669,8 @@ void parser::SIMPLE_STATEMENT() {
                 id_table_entry* current_return_ident = table->lookup(scan->get_current_identifier_name());
                 if(current_fun_or_proc == NULL)
                     throw lille_exception("Return in non-function");
-                else if(not current_fun_or_proc->tipe().is_type(current_return_ident->tipe()))
-                        throw lille_exception("Function return value is " + current_fun_or_proc->tipe().to_string() + " but given " + current_return_ident->tipe().to_string());
+                else if(not current_fun_or_proc->return_tipe().is_type(current_return_ident->tipe()))
+                        throw lille_exception("Function return value is " + current_fun_or_proc->return_tipe().to_string() + " but given " + current_return_ident->tipe().to_string());
                 scan->must_be(symbol::identifier);
             }
             // Else if a number given is of functions return type

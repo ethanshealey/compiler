@@ -3,7 +3,7 @@ program prog8 is
 
 begin
     i := 0;
-	while i<5
+	while i<89
     loop
         j := 0;
         while j<5
