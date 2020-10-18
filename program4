@@ -3,7 +3,7 @@ program prog4 is
 	procedure newNumber(n: value integer) is
 	begin
 		count := count + 1;
-		total := "hi";
+		total := true;
 	end;
 begin
 	count := 0;

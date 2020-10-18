@@ -369,7 +369,6 @@ void parser::DECLERATION() {
                     scan->must_be(symbol::boolean_sym);
                 }
 
-                cout << ty.to_string() << endl;
                 id = table->enter_id(ident, ty, knd, table->scope(), 0, lille_type::type_unknown);
             }
             // add the entry to the table
@@ -599,7 +598,7 @@ void parser::SIMPLE_STATEMENT() {
                     finished = false;
                 }
                 else if(IS_BOOL()) {
-                    if(current_entry->tipe().is_type(lille_type::type_boolean))
+                    if(not current_entry->tipe().is_type(lille_type::type_boolean))
                         throw lille_exception("Cannot assign boolean values to a non boolean identifier");
                     finished = false;
                     if(scan->have(symbol::true_sym))
