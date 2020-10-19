@@ -32,7 +32,6 @@ private:
         id_table_entry* idt;
     };
     node* sym_table[max_depth];
-    node* search_tree(string s, node* p);
     void add_table_entry(id_table_entry* it, node* ptr);
     void dump_tree(node* ptr);
 

@@ -166,17 +166,3 @@ id_table_entry* id_table::lookup(token* tok) {
 		cout << "DID NOT FIND: Failed to find entry " << tok->to_string() << endl; 
 	return NULL;
 }
-
-id_table::node* id_table::search_tree(string s, node* p) {
-	if(p != NULL or p->idt != NULL) {
-		if(s == p->idt->name()) {
-			return p;
-		}
-		if(s < p->idt->name()) {
-			search_tree(s, p->left);
-		}
-		else 
-			search_tree(s, p->right);
-	}
-	else return NULL;
-}
