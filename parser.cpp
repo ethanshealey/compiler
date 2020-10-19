@@ -36,6 +36,7 @@ parser::parser(scanner* s, id_table* t, error_handler* e) {
     current_fun_or_proc = NULL;
     current_ident = NULL;
 }
+
 parser::~parser() {
     /***
      * Deconstructor
@@ -152,7 +153,6 @@ void parser::BLOCK() {
     STATEMENT_LIST();
     scan->must_be(symbol::end_sym);
     if (scan->have(symbol::identifier)) {
-        
 
         scan->must_be(symbol::identifier);
     }
