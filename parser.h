@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <string>
+#include <list>
+#include <algorithm>
 
 #include "id_table.h"
 #include "symbol.h"
@@ -62,6 +64,8 @@ private:
     void handle_function_or_procedure_call(id_table_entry* current_entry);
     void handle_if_and_while();
     lille_type get_type();
+    list<token*> IDENT_LIST();
+    void PARAM();
 };
 
 #endif

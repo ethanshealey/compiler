@@ -8,6 +8,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>  
+#include <list>
 #include "symbol.h"
 #include "scanner.h"
 #include "token.h"
@@ -171,34 +172,10 @@ void parser::DECLERATION() {
 
     // If declaring identifier ->
     if (scan->have(symbol::identifier)) {
-        int x = 0;
 
-        // create an array of tokens to store all variables and their names
-        token* variables[15];
+        list<token*> variables = IDENT_LIST();
 
-        for(int i = 0; i < 15; i++) 
-            // Initalize array to null
-            variables[i] = NULL;
-
-        bool comma_flag = false;
-        
-        do {
-            // For each identifier found ->
-            if(scan->have(symbol::identifier)) {
-                // Add the new variable into the array
-                variables[x] = new token(new symbol(symbol::identifier), 0, 0);
-                // Assign the name to the token
-                variables[x++]->set_identifier_value(scan->get_current_identifier_name());
-                scan->must_be(symbol::identifier);
-            }
-            // If there are more variables ->
-            comma_flag = scan->have(symbol::comma_sym);
-            if(comma_flag)
-                scan->must_be(symbol::comma_sym);
-        }
-        while(comma_flag);
-
-        scan->must_be(symbol::colon_sym);
+         scan->must_be(symbol::colon_sym);
 
         bool const_flag = false;
 
@@ -288,7 +265,6 @@ void parser::DECLERATION() {
 
     // Else is a procedure/function decleration ->
     else {
-        id_table_entry* id;
         bool is_func = false;
         // Is a prcedure ->
         if(scan->have(symbol::procedure_sym)) {
@@ -321,68 +297,8 @@ void parser::DECLERATION() {
             // Trip flag to remember it is a function
             is_func = true;
         }
-        scan->must_be(symbol::left_paren_sym);
-        table->enter_scope();
-        bool semi_flag = false;
-        // Find all paramters ->
-        do {
-            // If a new parameter is found ->
-            if(scan->have(symbol::identifier)) {
-                symbol* sym = new symbol(symbol::identifier);
-                token* ident = new token(sym, 0, 0);
-                ident->set_identifier_value(scan->get_current_identifier_name());
-                scan->must_be(symbol::identifier);
-                scan->must_be(symbol::colon_sym);
-                // Get the kind of param (ref or value)
-                int k = scan->this_token()->get_symbol()->get_sym();
-                lille_kind knd = lille_kind::unknown;
-                switch(k) {
-                    case symbol::ref_sym: {
-                        scan->must_be(symbol::ref_sym);
-                        knd = lille_kind::ref_param;
-                        break;
-                    }
-                    case symbol::value_sym: {
-                        scan->must_be(symbol::value_sym);
-                        knd = lille_kind::value_param;
-                        break;
-                    }
-                }
-                // Create the entry for the parameter
-                lille_type ty;
-    
-                
-                if (scan->have(symbol::integer_sym)) {
-                    ty = lille_type::type_integer;
-                    scan->must_be(symbol::integer_sym);
-                }
-                else if (scan->have(symbol::real_sym)) {
-                    ty = lille_type::type_real;
-                    scan->must_be(symbol::real_sym);
-                }
-                else if(scan->have(symbol::string_sym)) {
-                    ty = lille_type::type_string;
-                    scan->must_be(symbol::string_sym);
-                }
-                else {
-                    ty = lille_type::type_boolean;
-                    scan->must_be(symbol::boolean_sym);
-                }
-
-                id = table->enter_id(ident, ty, knd, table->scope(), 0, lille_type::type_unknown);
-            }
-            // add the entry to the table
-            table->add_table_entry(id);
-            // link the parameter to the procedure
-            current_fun_or_proc->add_param(id);
-
-            // If a semi-colon is found, keep going
-            semi_flag = scan->have(symbol::semicolon_sym);
-            if(semi_flag)
-                scan->must_be(symbol::semicolon_sym);
-        }
-        while(semi_flag);
-        scan->must_be(symbol::right_paren_sym);
+        
+        PARAM();
 
         // If is a function ->
         if(is_func) {
@@ -1210,4 +1126,96 @@ lille_type parser::get_type() {
     else if(scan->have(symbol::true_sym) or scan->have(symbol::false_sym))
         return lille_type::type_boolean;
     else return lille_type::type_unknown;
+}
+
+list<token*> parser::IDENT_LIST() {
+    // create an array of tokens to store all variables and their names
+        list<token*> variables;
+
+        bool comma_flag = false;
+        
+        do {
+            // For each identifier found ->
+            if(scan->have(symbol::identifier)) {
+                // Add the new variable into the array
+                variables.push_back(new token(new symbol(symbol::identifier), 0, 0));
+                // Assign the name to the token
+                variables.back()->set_identifier_value(scan->get_current_identifier_name());
+                scan->must_be(symbol::identifier);
+            }
+            // If there are more variables ->
+            comma_flag = scan->have(symbol::comma_sym);
+            if(comma_flag)
+                scan->must_be(symbol::comma_sym);
+        }
+        while(comma_flag);
+
+    return variables;
+}
+
+void parser::PARAM() {
+    
+    id_table_entry* id;
+    scan->must_be(symbol::left_paren_sym);
+        table->enter_scope();
+        bool semi_flag = false;
+        // Find all paramters ->
+        do {
+            // If a new parameter is found ->
+            if(scan->have(symbol::identifier)) {
+                symbol* sym = new symbol(symbol::identifier);
+                token* ident = new token(sym, 0, 0);
+                ident->set_identifier_value(scan->get_current_identifier_name());
+                scan->must_be(symbol::identifier);
+                scan->must_be(symbol::colon_sym);
+                // Get the kind of param (ref or value)
+                int k = scan->this_token()->get_symbol()->get_sym();
+                lille_kind knd = lille_kind::unknown;
+                switch(k) {
+                    case symbol::ref_sym: {
+                        scan->must_be(symbol::ref_sym);
+                        knd = lille_kind::ref_param;
+                        break;
+                    }
+                    case symbol::value_sym: {
+                        scan->must_be(symbol::value_sym);
+                        knd = lille_kind::value_param;
+                        break;
+                    }
+                }
+                // Create the entry for the parameter
+                lille_type ty;
+    
+                
+                if (scan->have(symbol::integer_sym)) {
+                    ty = lille_type::type_integer;
+                    scan->must_be(symbol::integer_sym);
+                }
+                else if (scan->have(symbol::real_sym)) {
+                    ty = lille_type::type_real;
+                    scan->must_be(symbol::real_sym);
+                }
+                else if(scan->have(symbol::string_sym)) {
+                    ty = lille_type::type_string;
+                    scan->must_be(symbol::string_sym);
+                }
+                else {
+                    ty = lille_type::type_boolean;
+                    scan->must_be(symbol::boolean_sym);
+                }
+
+                id = table->enter_id(ident, ty, knd, table->scope(), 0, lille_type::type_unknown);
+            }
+            // add the entry to the table
+            table->add_table_entry(id);
+            // link the parameter to the procedure
+            current_fun_or_proc->add_param(id);
+
+            // If a semi-colon is found, keep going
+            semi_flag = scan->have(symbol::semicolon_sym);
+            if(semi_flag)
+                scan->must_be(symbol::semicolon_sym);
+        }
+        while(semi_flag);
+        scan->must_be(symbol::right_paren_sym);
 }
