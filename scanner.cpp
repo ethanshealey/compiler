@@ -797,28 +797,15 @@ bool scanner::have(symbol::symbol_type s)
 		return false;
 }
 
-void scanner::syntax(symbol::symbol_type s) {
-	if(not recovering) {
-		error->flag(current_token, error_message(s));
-		recovering = true;
-	}
-}
 
 void scanner::must_be(symbol::symbol_type s)
 // The current token must be an s symbol otherwise it is a syntax error. If the current token matches
 // the symbol s, then the scanner discards the token and advances to the next token in the source file.
 {
-	if(recovering) {
-		while(current_token->get_sym() != s and current_token->get_sym() != symbol::end_of_program) 
-			get_token();
-		if(s == current_token->get_sym())
-			get_token();
-		recovering = true;
-	}
-	else if (current_token->get_sym() == s) 
+	if (current_token->get_sym() == s)
 		get_token();
-	else 
-		syntax(s);
+	else
+		error->flag(current_token, error_message(s));
 }
 
 
