@@ -41,6 +41,7 @@ scanner::scanner()
 	error = NULL;		// specified by public constructor
 	id_tab = NULL;		// specified by public constructor
 	debugging = true;
+	recovering=false;
 }
 
 
@@ -802,7 +803,14 @@ void scanner::must_be(symbol::symbol_type s)
 // The current token must be an s symbol otherwise it is a syntax error. If the current token matches
 // the symbol s, then the scanner discards the token and advances to the next token in the source file.
 {
-	if (current_token->get_sym() == s)
+	if(recovering) {
+		while(current_token->get_sym() != s and current_token->get_sym() != symbol::end_of_program) 
+			get_token();
+		if(s == current_token->get_sym())
+			get_token();
+		recovering = false;
+	}
+	else if (current_token->get_sym() == s) 
 		get_token();
 	else
 		error->flag(current_token, error_message(s));

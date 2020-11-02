@@ -22,7 +22,8 @@ using namespace std;
 class scanner {
 private:
 	bool debugging {false};			// Set debugging to true to execute statement to help debug the scanner, otherwise set to false.
-
+	bool recovering;
+	
 	const char end_marker = char(7);	// BELL character. Not typically in the source file and it is a control character < SPACE
 	token* current_token;
 	ifstream source_file;			// Source file to be compiled.
