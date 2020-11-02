@@ -976,10 +976,9 @@ void parser::handle_function_or_procedure_call(id_table_entry* current_entry) {
                 }
                 scan->must_be(symbol::identifier);
             }
-            else if(not current_entry->nth_parameter(i)->tipe().is_type(get_type())) {
-                    throw lille_exception("Value Given Does Not Match Parameter Type in " + current_entry_name);
-            }
             else {
+                if(not current_entry->nth_parameter(i)->tipe().is_type(get_type())) 
+                    throw lille_exception("Value Given Does Not Match Parameter Type in " + current_entry_name);
                 if(scan->have(symbol::integer))
                    scan->must_be(symbol::integer);
                 else if(scan->have(symbol::real_num))
@@ -996,10 +995,6 @@ void parser::handle_function_or_procedure_call(id_table_entry* current_entry) {
                 scan->must_be(symbol::comma_sym);
         }
     }
-
-
-
-
     else if(current_entry->tipe().is_type(lille_type::type_proc)) {
         /**** HANDEL PROCEDURE CALL ****/
         for(int i = 0; i < current_entry->number_of_params(); i++) {
@@ -1010,10 +1005,9 @@ void parser::handle_function_or_procedure_call(id_table_entry* current_entry) {
                 }
                 scan->must_be(symbol::identifier);
             }
-            else if(not current_entry->nth_parameter(i)->tipe().is_type(get_type())) {
-                    throw lille_exception("Value Given Does Not Match Parameter Type in " + current_entry_name);
-            }
             else {
+                if(not current_entry->nth_parameter(i)->tipe().is_type(get_type())) 
+                    throw lille_exception("Value Given Does Not Match Parameter Type in " + current_entry_name);
                 if(scan->have(symbol::integer))
                    scan->must_be(symbol::integer);
                 else if(scan->have(symbol::real_num))

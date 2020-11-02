@@ -22,6 +22,7 @@ using namespace std;
 class scanner {
 private:
 	bool debugging {false};			// Set debugging to true to execute statement to help debug the scanner, otherwise set to false.
+	bool recovering;
 
 	const char end_marker = char(7);	// BELL character. Not typically in the source file and it is a control character < SPACE
 	token* current_token;
@@ -55,6 +56,8 @@ private:
 	void get_char();				// get the next character from the input_buffer
 	char following_char();			// peek at the next character on the line. Helpful for dealing with compound symbols such as :=
 	void fill_buffer();				// Call get_line() and set next_char
+
+	void syntax(symbol::symbol_type s);
 	
 public:
     bool eof_flag;

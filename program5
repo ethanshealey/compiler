@@ -18,7 +18,7 @@ begin
 	write ("Enter a number: ");
 	read (number);
 	double(number, dNumber);
-	quadruple(number, qNumber);
+	quadruple(number, dnumber);
 	writeln;	-- Leave an empty line
 	writeln (int2string(number), "  ", int2string(dnumber), "  ", int2string(qNumber));
 end prog5;
