@@ -84,6 +84,10 @@ public:
     // Returns the current token, without advancing to the next token in the input stream.
 
 	void print_current_token();
+
+	string get_current_identifier_name();
+
+	string get_current_sym();
 };
 
 #endif /* SCANNER_H_ */

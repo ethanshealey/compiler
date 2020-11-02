@@ -44,7 +44,7 @@
 #include "symbol.h"
 #include "error_handler.h"
 //#include "code_gen.h"
-//#include "id_table.h"
+#include "id_table.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -199,33 +199,26 @@ bool process_command_line(int argc, char *argv[]) {
 				err = new error_handler(source_filename);
 			else
 				err = new error_handler(source_filename, listing_filename);
-
-						/*// THE FOLLOWIG CODE IS FOR TESTING PURPOSES ONLY.
-                        scan = new scanner(source_filename, id_tab, err);
-
-                        token* tok;
-                        do
-                        {
-                        	tok = scan->get_token();
-                        } while (tok->get_sym() != symbol::end_of_program);
-                        //END OF CODE FOR TESTING PURPOSES */
-						
-			
 			
 			// Create a symbol_table object
-			
+			id_table* table = new id_table(err);
+
 			// create a scanner object
 			scan = new scanner(source_filename, id_tab, err);
 
 			// create the code generator
 
 			// create a parser object
-			parse = new parser(scan);
+			parse = new parser(scan, table, err);
+
+			
+			
 			scan->get_token();
 			while(scan->have(symbol::program_sym)) {
 				parse->PROG();
 			}
 			scan->must_be(symbol::end_of_program);
+
 			// Compile the source code
 			
 			// Generate the PAL code file, if no errors were detected.
