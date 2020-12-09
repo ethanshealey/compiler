@@ -1,0 +1,14 @@
+program incorrect03 is
+	i: integer;
+	f: real;
+	s: string;
+	b: boolean;
+
+begin
+	i := f;		-- incorrect
+	f := i;		-- incorrect
+	i := 2.6;	-- incorrect
+	f := 26;		-- incorrect
+	s := b;		-- incorrect
+	b := s;		-- incorrect
+end incorrect03;

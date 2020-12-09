@@ -1,0 +1,6 @@
+program correct01 is
+    i: integer;
+
+begin
+    i := 26;
+end correct01;

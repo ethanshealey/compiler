@@ -1,0 +1,8 @@
+program incorrect12 is
+	b: boolean;
+	i: integer;
+
+begin
+	b := odd(i);		-- correct;
+	i := odd(i);		-- incorrect
+end incorrect12;

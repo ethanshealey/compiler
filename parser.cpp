@@ -298,6 +298,7 @@ void parser::DECLERATION() {
             is_func = true;
         }
         
+        table->enter_scope();
         PARAM();
 
         // If is a function ->
@@ -397,23 +398,39 @@ void parser::SIMPLE_STATEMENT() {
         string current_entry_name = scan->get_current_identifier_name();
         current_entry = table->lookup(current_entry_name);
 
-        // If no corresponding identifier is found ->
         if(current_entry == NULL) {
-            throw lille_exception("Use of undeclared identifier " + current_entry_name);
+            error->flag(scan->this_token(), 81);
+            throw lille_exception("Identifier not previously declared.");
         }
+
+        else if(current_entry->tipe().is_type(lille_type::type_prog)) {
+            error->flag(scan->this_token(), 91);
+        }
+
         scan->must_be(symbol::identifier);
         
         // If a left parantheses is found, handle 
         // function or procedure ->
-        if (scan->have(symbol::left_paren_sym)) {
-            scan->must_be(symbol::left_paren_sym);
+        if(current_entry->tipe().is_type(lille_type::type_func) or current_entry->tipe().is_type(lille_type::type_proc)) {
             handle_function_or_procedure_call(current_entry);
-        } 
+        }
         // If not a function/procedure call, must be becomes
         else {
             scan->must_be(symbol::becomes_sym);
             /**** HANDLE BECOMES ****/
             bool finished = true;
+
+            if(current_entry == NULL) {
+                error->flag(scan->this_token(), 81);
+            }
+            
+            if(current_entry->kind().is_kind(lille_kind::for_ident))
+                error->flag(scan->this_token(), 85);
+
+            if(current_entry->kind().is_kind(lille_kind::value_param)) {
+                error->flag(scan->this_token(), 85);
+            }
+
             do {
                 // If wrapped in paren, eat the symbols
                 if(scan->have(symbol::left_paren_sym)) {
@@ -441,16 +458,15 @@ void parser::SIMPLE_STATEMENT() {
                 else if(scan->have(symbol::identifier)) {
                     current_ident = table->lookup(scan->get_current_identifier_name());
                     if(not current_entry->tipe().is_type(current_ident->tipe()))
-                        throw lille_exception("Identifier Given Does Not Match Any Function Calls For " + current_entry_name);
+                        error->flag(scan->this_token(), 121);
                     scan->must_be(symbol::identifier);
 
                     /**** HANDLE FUNCTION/PROCEDURE CALL ****/
-                    if(scan->have(symbol::left_paren_sym)) {
-                        scan->must_be(symbol::left_paren_sym);
+                    if(current_ident->tipe().is_type(lille_type::type_func) or current_ident->tipe().is_type(lille_type::type_proc)) {
                         if(current_ident->tipe().is_type(lille_type::type_func) or current_ident->tipe().is_type(lille_type::type_proc))
                             handle_function_or_procedure_call(current_ident);
                         else
-                            throw lille_exception(current_ident->name() + " is not a function or procedure.");
+                            error->flag(scan->this_token(), 121);
                     }
                     finished = false;
                 }
@@ -579,12 +595,16 @@ void parser::SIMPLE_STATEMENT() {
     // If a return sym is found ->
     else if (scan->have(symbol::return_sym)) {
         scan->must_be(symbol::return_sym);
-        if (IS_EXPR()) {
+        while (IS_EXPR() or IS_ADDOP() or IS_MULTOP()) {
             // Make sure the identifier given is the functions return type
             if(scan->have(symbol::identifier)) {
                 id_table_entry* current_return_ident = table->lookup(scan->get_current_identifier_name());
-                if(current_fun_or_proc == NULL)
+                if(not current_fun_or_proc->tipe().is_type(lille_type::type_func))
                     throw lille_exception("Return in non-function");
+                else if(current_return_ident->tipe().is_equal(lille_type::type_func)) {
+                    if(not current_fun_or_proc->return_tipe().is_type(current_return_ident->return_tipe()))
+                        throw lille_exception("ERROR: Function return value is " + current_fun_or_proc->return_tipe().to_string() + " but given " + current_return_ident->tipe().to_string());
+                }
                 else if(not current_fun_or_proc->return_tipe().is_type(current_return_ident->tipe()))
                         throw lille_exception("Function return value is " + current_fun_or_proc->return_tipe().to_string() + " but given " + current_return_ident->tipe().to_string());
                 scan->must_be(symbol::identifier);
@@ -592,12 +612,12 @@ void parser::SIMPLE_STATEMENT() {
             // Else if a number given is of functions return type
             else if(IS_NUMBER()) {
                 if(scan->have(symbol::integer)) {
-                    if(not current_fun_or_proc->tipe().is_type(lille_type::type_integer))
+                    if(not current_fun_or_proc->return_tipe().is_type(lille_type::type_integer))
                         throw lille_exception("Function return value is " + current_fun_or_proc->tipe().to_string() + " but given Integer");
                     scan->must_be(symbol::integer);
                 }
                 if(scan->have(symbol::real_num)) {
-                    if(not current_fun_or_proc->tipe().is_type(lille_type::type_integer))
+                    if(not current_fun_or_proc->return_tipe().is_type(lille_type::type_integer))
                         throw lille_exception("Function return value is " + current_fun_or_proc->tipe().to_string() + " but given Real Number");
                     scan->must_be(symbol::real_num);
                 }
@@ -619,6 +639,19 @@ void parser::SIMPLE_STATEMENT() {
                 scan->must_be(symbol::strng);
             }
             else throw lille_exception("Function return is " + current_fun_or_proc->tipe().to_string() + " but given Unknown");
+        
+            if(IS_ADDOP()) {
+                    if (scan->have(symbol::plus_sym)) 
+                        scan->must_be(symbol::plus_sym);
+                    else 
+                        scan->must_be(symbol::minus_sym);
+                }
+                else if(IS_MULTOP()) {
+                    if (scan->have(symbol::asterisk_sym)) 
+                        scan->must_be(symbol::asterisk_sym);
+                    else 
+                        scan->must_be(symbol::slash_sym);
+                }
         }
     } 
 
@@ -664,10 +697,8 @@ void parser::SIMPLE_STATEMENT() {
             if(scan->have(symbol::identifier)) {
                 current_ident = table->lookup(scan->get_current_identifier_name());
                 scan->must_be(symbol::identifier);
-                if(scan->have(symbol::left_paren_sym)) {
-                    scan->must_be(symbol::left_paren_sym);
+                if(current_ident->tipe().is_type(lille_type::type_func) or current_ident->tipe().is_type(lille_type::type_proc))
                     handle_function_or_procedure_call(current_ident);
-                }
             }
             else if(scan->have(symbol::strng)) {
                 scan->must_be(symbol::strng);
@@ -702,10 +733,9 @@ void parser::SIMPLE_STATEMENT() {
             if(scan->have(symbol::identifier)) {
                 current_ident = table->lookup(scan->get_current_identifier_name());
                 scan->must_be(symbol::identifier);
-                if(scan->have(symbol::left_paren_sym)) {
-                    scan->must_be(symbol::left_paren_sym);
+                if(current_ident->tipe().is_type(lille_type::type_func) or current_ident->tipe().is_type(lille_type::type_proc))
                     handle_function_or_procedure_call(current_ident);
-                }
+                
             }
             else if(scan->have(symbol::strng)) {
                 scan->must_be(symbol::strng);
@@ -958,6 +988,7 @@ lille_type parser::get_ident_type() {
 void parser::handle_function_or_procedure_call(id_table_entry* current_entry) {
 
     /***
+     * 
      * handle_function_or_procedure_call
      * 
      * Handles the arguments in a function or
@@ -965,13 +996,30 @@ void parser::handle_function_or_procedure_call(id_table_entry* current_entry) {
      * 
      */
 
+    bool lp = false;
+    if(scan->have(symbol::left_paren_sym)) {
+        scan->must_be(symbol::left_paren_sym);
+        lp = true;
+    }
+
     string current_entry_name = current_entry->name();
     if(current_entry->tipe().is_type(lille_type::type_func)) {
         /**** HANDEL FUNCTION CALL ****/
         for(int i = 0; i < current_entry->number_of_params(); i++) {
             if(scan->have(symbol::identifier)) {
                 current_ident = table->lookup(scan->get_current_identifier_name());
-                if(not current_entry->nth_parameter(i)->tipe().is_type(current_ident->tipe())) {
+                if(current_ident->kind().is_kind(lille_kind::for_ident)) {
+                    error->flag(scan->this_token(), 96);
+                }
+                else if(current_ident->tipe().is_type(lille_type::type_func)) {
+                    if(current_entry->nth_parameter(i)->kind().is_kind(lille_kind::ref_param)) {
+                        error->flag(scan->this_token(), 123);
+                    }
+                    if(not current_entry->nth_parameter(i)->tipe().is_type(current_ident->return_tipe())) {
+                        throw lille_exception("Identifier " + current_ident->name() + " Does Not Match Parameter Type in " + current_entry_name);
+                    }
+                }
+                else if(not current_entry->nth_parameter(i)->tipe().is_type(current_ident->tipe())) {
                     throw lille_exception("Identifier " + current_ident->name() + " Does Not Match Parameter Type in " + current_entry_name);
                 }
                 scan->must_be(symbol::identifier);
@@ -1000,7 +1048,21 @@ void parser::handle_function_or_procedure_call(id_table_entry* current_entry) {
         for(int i = 0; i < current_entry->number_of_params(); i++) {
             if(scan->have(symbol::identifier)) {
                 current_ident = table->lookup(scan->get_current_identifier_name());
-                if(not current_entry->nth_parameter(i)->tipe().is_type(current_ident->tipe())) {
+                if(current_ident->kind().is_kind(lille_kind::value_param) and current_entry->nth_parameter(i)->kind().is_kind(lille_kind::ref_param)) {
+                    error->flag(scan->this_token(), 98);
+                }
+                else if(current_ident->kind().is_kind(lille_kind::for_ident) and not current_entry->nth_parameter(i)->kind().is_kind(lille_kind::value_param)) {
+                    throw lille_exception("Cannot pass FOR loop identifier into procedure");
+                }
+                else if(current_ident->tipe().is_type(lille_type::type_func)) {
+                    if(current_entry->nth_parameter(i)->kind().is_kind(lille_kind::ref_param)) {
+                        error->flag(scan->this_token(), 123);
+                    }
+                    if(not current_entry->nth_parameter(i)->tipe().is_type(current_ident->return_tipe())) {
+                        throw lille_exception("Identifier " + current_ident->name() + " Does Not Match Parameter Type in " + current_entry_name);
+                    }
+                }
+                else if(not current_entry->nth_parameter(i)->tipe().is_type(current_ident->tipe())) {
                     throw lille_exception("Identifier " + current_ident->name() + " Does Not Match Parameter Type in " + current_entry_name);
                 }
                 scan->must_be(symbol::identifier);
@@ -1027,7 +1089,9 @@ void parser::handle_function_or_procedure_call(id_table_entry* current_entry) {
     }
     else throw lille_exception("Unkown Function/Procedure " + current_entry_name);
 
-    scan->must_be(symbol::right_paren_sym);
+    if(lp) {
+        scan->must_be(symbol::right_paren_sym);
+    }
 }
 
 void parser::handle_if_and_while() {
@@ -1083,10 +1147,10 @@ void parser::handle_if_and_while() {
                 else if(scan->have(symbol::false_sym)) {
                     scan->must_be(symbol::false_sym);
                 }
-                else throw lille_exception("Invalid argument for `if`");
+                else throw lille_exception("Invalid argument for loop");
             }
             else if(not if_cond->tipe().is_type(lille_type::type_boolean)) {
-                throw lille_exception("Invalid argument for `if`");
+                throw lille_exception("Invalid argument for loop");
             }        
         }
         else if(scan->have(symbol::true_sym)) {
@@ -1150,8 +1214,9 @@ list<token*> parser::IDENT_LIST() {
 void parser::PARAM() {
     
     id_table_entry* id;
-    scan->must_be(symbol::left_paren_sym);
-        table->enter_scope();
+    if(scan->have(symbol::left_paren_sym)) {
+        scan->must_be(symbol::left_paren_sym);
+       
         bool semi_flag = false;
         // Find all paramters ->
         do {
@@ -1212,4 +1277,5 @@ void parser::PARAM() {
         }
         while(semi_flag);
         scan->must_be(symbol::right_paren_sym);
+    }
 }

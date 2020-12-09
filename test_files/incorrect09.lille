@@ -1,0 +1,12 @@
+program incorrect09 is
+
+	procedure A (i: ref integer) is
+	begin
+		writeln i;
+	end A;
+
+begin
+	for i in 1..10 loop
+		A(i);	-- incorrect
+	end loop;
+end incorrect09;

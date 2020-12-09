@@ -38,8 +38,10 @@ void id_table::dump_id_table(bool dump_all)
 	node* ptr;
 	if (!dump_all)
 	{
-		cout << "Dump of idtable for current scope only." << endl;
-		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+		if(debug_mode) {
+			cout << "Dump of idtable for current scope only." << endl;
+			cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+		}
 
 		ptr = sym_table[scope()];
 		exit_scope();
@@ -48,9 +50,10 @@ void id_table::dump_id_table(bool dump_all)
 	}
 	else
 	{
-		cout << "Dump of the entire symbol table." << endl;
-		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-		
+		if(debug_mode) {
+			cout << "Dump of the entire symbol table." << endl;
+			cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+		}
 		
         while(scope() > 0) {
 			ptr = sym_table[scope()];
@@ -129,7 +132,7 @@ id_table_entry* id_table::lookup(string s) {
 		}
 		else if(s == ptr->idt->name()) {
 			if(debug_mode)
-				cout << "FOUND ENTRY: Found entry " << s << endl;
+				cout << "FOUND ENTRY: Found entry " << s << " of type " << ptr->idt->tipe().to_string() << endl;
 			return ptr->idt; 
 		}
 	}

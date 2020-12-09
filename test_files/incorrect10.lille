@@ -1,0 +1,16 @@
+program incorrect10 is
+	k: integer;
+
+	procedure A (i: ref integer) is
+	begin
+		writeln i;
+	end A;
+
+	procedure B (j: value integer) is
+	begin
+		A(j);	-- incorrect
+	end B;
+
+begin
+	B(k);
+end incorrect10;

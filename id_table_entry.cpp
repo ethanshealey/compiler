@@ -10,6 +10,7 @@
 #include "id_table_entry.h"
 
 id_table_entry::id_table_entry() {
+    debug_mode = true;
     id_entry = NULL;
     lev_entry = 0;
     offset_entry = 0;
@@ -104,7 +105,8 @@ void id_table_entry::add_param(id_table_entry* param_entry) {
             ptr->p_list_entry = param_entry;
             finished = true;
             this->n_par_entry++;
-            cout << "LINKED PARAM: Linked " << param_entry->name() << " to " << this->name() << endl;
+            if(debug_mode)
+                cout << "LINKED PARAM: Linked " << param_entry->name() << " to " << this->name() << endl;
         }
         else
             ptr = ptr->p_list_entry;

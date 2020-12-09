@@ -1,0 +1,7 @@
+program correct02 is
+
+begin
+    for i in 1..10 loop
+    	writeln i;
+    end loop;
+end correct02;

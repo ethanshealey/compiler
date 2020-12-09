@@ -1,0 +1,5 @@
+program incorrect02 is
+
+begin
+	i := 26;		-- incorrect
+end incorrect02;

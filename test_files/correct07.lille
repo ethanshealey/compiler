@@ -1,0 +1,18 @@
+program correct07 is
+	
+	i: integer;
+
+	procedure A(i: value integer) is
+	begin
+		writeln(i);
+	end A;
+
+	procedure B(i: ref integer) is
+	begin
+		A(i);
+	end B;
+
+begin
+	i := 26;
+	B(i);
+end correct07;

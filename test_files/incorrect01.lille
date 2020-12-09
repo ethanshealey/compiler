@@ -1,0 +1,8 @@
+program incorrect01 is
+	
+
+begin
+	for i in 1..10 loop
+		i := i - 1;	-- incorrect
+	end loop;
+end incorrect01;

@@ -19,6 +19,7 @@ using namespace std;
 
 class id_table_entry {
 private:
+    bool debug_mode;
     token* id_entry;
     int lev_entry;
     int offset_entry;

@@ -28,6 +28,8 @@ public:
 
 private:
 
+    bool debug {false};
+
     scanner* scan; // Copy of scanner
     id_table* table;
     error_handler* error;

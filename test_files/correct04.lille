@@ -1,0 +1,16 @@
+program correct04 is
+
+	procedure A (i: value integer) is
+	begin
+		writeln i;
+	end A;
+
+	function B return integer is
+	begin
+		return 26;
+	end B;
+	
+
+begin
+	A(B);
+end correct04;

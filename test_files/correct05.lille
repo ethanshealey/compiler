@@ -1,0 +1,12 @@
+program correct05 is
+
+i: integer;
+
+begin
+	i := 26;
+	writeln (i);
+	for i in 1..10 loop
+		writeln (i);
+	end loop;
+	writeln (i);
+end correct05;

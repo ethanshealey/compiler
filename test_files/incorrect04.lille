@@ -1,0 +1,19 @@
+program incorrect04 is
+	i: integer;
+	f: real;
+	s: string;
+	b: boolean;
+
+	procedure A (i: ref integer; s: ref string) is
+	begin
+		writeln i;
+		writeln s;
+	end A;
+
+begin
+	A(i, s); 		-- correct
+	A(s, i);		-- incorrect
+	A(i, i);		-- incorrect
+	A(f, i);		-- incorrect
+	A(s, b);		-- incorrect
+end incorrect04;

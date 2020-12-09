@@ -1,0 +1,20 @@
+program incorrect07 is
+	function A return integer is
+	begin
+		return 26;
+	end A;
+
+	procedure B (i: ref integer) is
+	begin
+		writeln i;
+	end B;
+
+	procedure C (i: value integer) is
+	begin
+		writeln i;
+	end C;
+
+begin
+	C(A);	-- correct
+	B(A);	-- incorrect
+end incorrect07;

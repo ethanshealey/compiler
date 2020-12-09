@@ -1,0 +1,31 @@
+program correct03 is
+
+	i: integer;
+	j: constant integer := 26;
+
+	procedure A is
+		procedure B is
+			procedure C is
+				procedure D is
+				begin
+					writeln (i);
+				end D;
+			begin
+				writeln(j);
+				D;
+			end C;
+		begin 
+			C;
+		end B;
+	begin
+		B;
+		if i>0
+		then
+			i := 0;
+			A;
+		end if;
+	end A;
+
+begin
+	A;
+end correct03;

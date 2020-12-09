@@ -6,7 +6,7 @@ begin
 	while i<89
     loop
         j := 0;
-        while j<5
+        while j<'a'
         loop
             write "(", int2string(i) & ", " & int2string(j) & ")   ";
             exit when j >= 3;

@@ -22,6 +22,7 @@ using namespace std;
 error_handler::error_handler()
 // Constructor with no source file name or listing file name identified.
 {
+	recovering = true;
 	error_num = 0;
 	err_list = NULL;
 	listing_required = false;
@@ -44,6 +45,7 @@ error_handler::error_handler()
 error_handler::error_handler(string source_file_name)
 // Constructor. No listing file needed
 {
+	recovering = true;
 	error_num = 0;
 	err_list = NULL;
 	listing_required = false;
@@ -64,6 +66,7 @@ error_handler::error_handler(string source_file_name)
 error_handler::error_handler(string source_file_name, string list_file_name)
 // Constructor. Specifies name of listing file.
 {
+	recovering = true;
 	listing_required = true;
 	error_num = 0;
 	listing_required = true;
@@ -314,4 +317,19 @@ int error_handler::error_count()
 // Return number of errors found to date
 {
 	return error_num;
+}
+
+void error_handler::syntax(symbol::symbol_type s, token* tok, int msg) {
+	if(not recovering) {
+		flag(tok, msg);
+		recovering = true;
+	}
+}
+
+void error_handler::stopRecovery() {
+	recovering = false;
+}
+
+bool error_handler::recovery() {
+	return recovering;
 }

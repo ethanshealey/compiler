@@ -1,0 +1,10 @@
+program incorrect08 is
+
+	procedure C (i: value integer) is
+	begin
+		i := 26;	-- incorrect
+	end C;
+
+begin
+	C(26);	-- correct
+end incorrect08;

@@ -1,0 +1,15 @@
+program incorrect06 is
+	i: integer;
+	f: real;
+	s: string;
+	b: boolean;
+
+	procedure A (i: ref integer; s: ref string) is
+	begin
+		writeln i;
+		writeln s;
+	end A;
+
+begin
+	A(i, s, f);	-- incorrect
+end incorrect06;

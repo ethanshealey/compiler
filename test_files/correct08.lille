@@ -1,0 +1,15 @@
+program correct08 is
+	
+	function fact (i: value integer) return integer is
+	begin
+		if i<=0
+		then
+			return 1;
+		else
+			return i * fact (i-1);
+		end if;
+	end fact;
+
+begin
+	writeln fact(5);
+end correct08;

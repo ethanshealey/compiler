@@ -22,8 +22,9 @@ class error_handler {
 private:
 	error_handler();									// Construct. No source file listed. Use cin.
 	string listing_filename;
+	bool recovering;
 	string default_listing_file_name = "LISTING";
-	string default_source_file_name = "SOURCE";
+	string default_source_file_name = "SOURCE";	
 	bool listing_required;
 	ifstream source_file;
 	ofstream listing_file;
@@ -46,6 +47,7 @@ private:
 	void add_error_to_list(int line, int pos, int err);
 
 public:		
+	void stopRecovery();
 	error_handler(string source_file_name);								// Constructor. No listing file needed
 	error_handler(string source_file_name, string list_file_name);		// Constructor. Specifies name of listing file
 
@@ -53,7 +55,9 @@ public:
 	void flag(token* tok, int error_no);								// Error detected at token tok.
 	void set_error_limit(int i);
 	void generate_listing();											// Generate a listing file.
-	int error_count();													// Number of errors found so far.
+	int error_count();											     	// Number of errors found so far.
+	void syntax(symbol::symbol_type s, token* tok, int msg);	
+	bool recovery();											
 };
 
 
